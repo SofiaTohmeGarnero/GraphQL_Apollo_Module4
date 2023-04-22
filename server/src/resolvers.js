@@ -15,6 +15,30 @@ const resolvers = {
       return dataSources.trackAPI.getModule(id);
     },
   },
+  Mutation: {
+    // increments a track's numberOfViews property
+    //let's wait for the TrackAPI call to finish returning the data.
+    //We can do this by making the function async, then storing the results in a variable called track, making sure to await the results.
+    incrementTrackViews: async (_, { id }, { dataSources }) => {
+      try {
+        const track = await dataSources.trackAPI.incrementTrackViews(id);
+        return {
+          code: 200,
+          success: true,
+          message: `Successfully incremented number of views for track ${id}`,
+          track,
+        };
+      } catch (err) {
+        return {
+          code: err.extensions.response.status,
+          success: false,
+          message: err.extensions.response.body,
+          track: null,
+        };
+      }
+    },
+  },
+
   Track: {
     author: ({ authorId }, _, { dataSources }) => {
       return dataSources.trackAPI.getAuthor(authorId);
